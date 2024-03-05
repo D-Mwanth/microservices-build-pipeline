@@ -1,8 +1,7 @@
 ````groovy
-@Library("share-library") _
+@Library("shared-library") _
 pipeline {
 agent any
-
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
         INITIAL_VERSION = '1.0.0'
