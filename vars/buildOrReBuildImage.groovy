@@ -8,23 +8,25 @@ def call(service, initialBuild) {
             // Set image name
             IMAGE_NAME = "${DOCKER_USER}/${service}"
 
-            def currentVersion = sh(script: "grep \"image: ${IMAGE_NAME}:[^[:space:]]*\" ${KUBE_MANIFESTS_DIR}/${service}.yaml | awk -F ':' '{print \$3}'", returnStdout: true).trim()
+            // def currentVersion = sh(script: "grep \"image: ${IMAGE_NAME}:[^[:space:]]*\" ${KUBE_MANIFESTS_DIR}/${service}.yaml | awk -F ':' '{print \$3}'", returnStdout: true).trim()
+            // def currentVersion = sh(script: "grep 'image: ${IMAGE_NAME}:[^[:space:]]*' ${KUBE_MANIFESTS_DIR}/${service}.yaml | awk -F ':' '{print \$3}' | awk '{gsub(/^v/, ""); print}'", returnStdout: true).trim()
+            def currentVersion = sh(script: "grep \"image: ${IMAGE_NAME}:[^[:space:]]*\" ${KUBE_MANIFESTS_DIR}/${service}.yaml | awk -F ':' '{print \$3}' | awk '{gsub(/^v/, \"\"); print}'", returnStdout: true).trim()
 
             dir(serviceDir) {
                 // Build image
                 sh "docker build -t ${IMAGE_NAME} ."
 
                 // Tag and push image
-                sh "docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${initialBuild ? INITIAL_VERSION : incrementVersion(currentVersion)}"
-                sh "docker push ${IMAGE_NAME}:${initialBuild ? INITIAL_VERSION : incrementVersion(currentVersion)}"
+                sh "docker tag ${IMAGE_NAME} ${IMAGE_NAME}:v${initialBuild ? INITIAL_VERSION : incrementVersion(currentVersion)}"
+                sh "docker push ${IMAGE_NAME}:v${initialBuild ? INITIAL_VERSION : incrementVersion(currentVersion)}"
                 sh "docker push ${IMAGE_NAME}:latest"
 
                 // Update manifest file
-                sh "sed -i '' -e 's|${IMAGE_NAME}:${currentVersion}|${IMAGE_NAME}:${initialBuild ? INITIAL_VERSION : incrementVersion(currentVersion)}|g' ${KUBE_MANIFESTS_DIR}/${service}.yaml || true"
+                sh "sed -i '' -e 's|${IMAGE_NAME}:v${currentVersion}|${IMAGE_NAME}:v${initialBuild ? INITIAL_VERSION : incrementVersion(currentVersion)}|g' ${KUBE_MANIFESTS_DIR}/${service}.yaml || true"
 
                 // Remove the local images
                 sh "docker rmi ${IMAGE_NAME}:latest"
-                sh "docker rmi ${IMAGE_NAME}:${initialBuild ? INITIAL_VERSION : incrementVersion(currentVersion)}"
+                sh "docker rmi ${IMAGE_NAME}:v${initialBuild ? INITIAL_VERSION : incrementVersion(currentVersion)}"
                 // Remove dangling images
                 sh 'docker image prune -f'
             }
