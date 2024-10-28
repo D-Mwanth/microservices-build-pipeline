@@ -10,7 +10,7 @@ def call(service, initialBuild) {
 
             // def currentVersion = sh(script: "grep \"image: ${IMAGE_NAME}:[^[:space:]]*\" ${KUBE_MANIFESTS_DIR}/${service}.yaml | awk -F ':' '{print \$3}'", returnStdout: true).trim()
             // def currentVersion = sh(script: "grep 'image: ${IMAGE_NAME}:[^[:space:]]*' ${KUBE_MANIFESTS_DIR}/${service}.yaml | awk -F ':' '{print \$3}' | awk '{gsub(/^v/, ""); print}'", returnStdout: true).trim()
-            def currentVersion = sh(script: "grep \"image: ${IMAGE_NAME}:[^[:space:]]*\" ${KUBE_MANIFESTS_DIR}/${service}.yaml | awk -F ':' '{print \$3}' | awk '{gsub(/^v/, \"\"); print}'", returnStdout: true).trim()
+            def currentVersion = sh(script: "grep \"image: ${IMAGE_NAME}:[^[:space:]]*\" ${KUBE_MANIFESTS_DIR}/${service}/${service}.yaml | awk -F ':' '{print \$3}' | awk '{gsub(/^v/, \"\"); print}'", returnStdout: true).trim()
 
             dir(serviceDir) {
                 // Build image
@@ -22,7 +22,7 @@ def call(service, initialBuild) {
                 sh "docker push ${IMAGE_NAME}:latest"
 
                 // Update manifest file
-                sh "sed -i '' -e 's|${IMAGE_NAME}:v${currentVersion}|${IMAGE_NAME}:v${initialBuild ? INITIAL_VERSION : incrementVersion(currentVersion)}|g' ${KUBE_MANIFESTS_DIR}/${service}.yaml || true"
+                sh "sed -i '' -e 's|${IMAGE_NAME}:v${currentVersion}|${IMAGE_NAME}:v${initialBuild ? INITIAL_VERSION : incrementVersion(currentVersion)}|g' ${KUBE_MANIFESTS_DIR}/${service}/${service}.yaml || true"
 
                 // Remove the local images
                 sh "docker rmi ${IMAGE_NAME}:latest"
