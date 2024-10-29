@@ -26,7 +26,7 @@ pipeline {
             }
         }
 
-        stage('Clone Repositories') {
+        stage('Checkout Microservices & K8s Manifests') {
             steps {
                 script {
                     // Clone the microservices-app repository
