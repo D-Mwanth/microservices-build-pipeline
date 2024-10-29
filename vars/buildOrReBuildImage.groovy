@@ -26,8 +26,8 @@ def call(service, initialBuild) {
 
                 // Remove the local images
                 sh "docker rmi ${IMAGE_NAME}"
-                sh "docker rmi ${IMAGE_NAME}:latest"
-                sh "docker rmi ${IMAGE_NAME}:v${initialBuild ? INITIAL_VERSION : incrementVersion(currentVersion)}"
+                // sh "docker rmi ${IMAGE_NAME}:latest"
+                // sh "docker rmi ${IMAGE_NAME}:v${initialBuild ? INITIAL_VERSION : incrementVersion(currentVersion)}"
                 // Remove dangling images
                 sh 'docker image prune -f'
             }
