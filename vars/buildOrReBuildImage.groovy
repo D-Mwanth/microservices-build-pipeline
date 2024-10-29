@@ -14,7 +14,7 @@ def call(service, initialBuild) {
 
             dir(serviceDir) {
                 // Build image
-                sh "docker build -t ${IMAGE_NAME} ."
+                sh "docker build --no-cache -t ${IMAGE_NAME} ."
 
                 // Tag and push image
                 sh "docker tag ${IMAGE_NAME} ${IMAGE_NAME}:v${initialBuild ? INITIAL_VERSION : incrementVersion(currentVersion)}"
