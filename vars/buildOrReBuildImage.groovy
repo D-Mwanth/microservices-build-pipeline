@@ -27,7 +27,7 @@ def call(service, initialBuild) {
                 sh "docker rmi ${IMAGE_NAME}:latest"
                 sh "docker rmi ${IMAGE_NAME}:v${initialBuild ? INITIAL_VERSION : incrementVersion(currentVersion)}"
                 // Remove dangling images
-                // sh 'docker image prune -f'
+                sh 'docker image prune -f'
 
             }
         }
