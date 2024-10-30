@@ -23,8 +23,7 @@ def call(service, initialBuild) {
                 // Update manifest file
                 sh "sed -i '' -e 's|${IMAGE_NAME}:v${currentVersion}|${IMAGE_NAME}:v${initialBuild ? INITIAL_VERSION : incrementVersion(currentVersion)}|g' ${KUBE_MANIFESTS_DIR}/${service}/${service}.yaml || true"
 
-                // Remove all local Docker images
-                // sh "docker images -q | xargs -r docker rmi -f || true"
+                // Remove tagged Docker images
                 sh "docker rmi ${IMAGE_NAME}:latest"
                 sh "docker rmi ${IMAGE_NAME}:v${initialBuild ? INITIAL_VERSION : incrementVersion(currentVersion)}"
                 // Remove dangling images
