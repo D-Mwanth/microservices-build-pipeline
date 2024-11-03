@@ -71,7 +71,7 @@ pipeline {
                     def existingServices = script {
                         return readFile("${SER_TRACKING_FILE}").trim()
                     }
-                    echo "${servicesToBuild}"
+                    // echo "${servicesToBuild}"
                     servicesToBuild.each { service ->
                         def initialBuild = shouldBuildInitially(service, env.BUILD_NUMBER.toInteger(), existingServices)
                         if (initialBuild) {
