@@ -66,7 +66,7 @@ pipeline {
                     // Set read, write, execute permissions for all users on manifest directory
                     sh 'chmod -R 777 ${KUBE_MANIFESTS_DIR}'
 
-                    // Use build number to determine services to build (refer to determineServices function for details)
+                    // Copy the names of the services and read in the existing one
                     def servicesToBuild = env.SERVICES_TO_BUILD.split(',')
                     def existingServices = script {
                         return readFile("${SER_TRACKING_FILE}").trim()
